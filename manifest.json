@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Zoho Mail Downloader",
+  "version": "1.0.0",
+  "description": "Download all emails from Zoho Mail as .eml files in a zip, using your signed-in browser session.",
+  "permissions": [
+    "storage",
+    "downloads",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://mail.zoho.com/*",
+    "https://*.zoho.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Zoho Mail Downloader"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.zoho.com/*",
+        "https://*.zoho.com/zm/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

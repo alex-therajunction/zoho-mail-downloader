@@ -1,0 +1,25 @@
+# Secrets / env
+.env
+.env.*
+*.pem
+*.key
+credentials*.json
+secrets*
+
+# Node (if ever added)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Build / zip artifacts
+*.zip
+dist/
+build/
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*~
