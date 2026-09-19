@@ -22,10 +22,11 @@ Trash/Spam exclusion uses `folderType` and common folder names when type is miss
 ## Packaging
 
 - JSZip **3.10.1** vendored at `lib/jszip.min.js` (no CDN at runtime).
-- `importScripts('lib/jszip.min.js')` then `background-part1.js` / `background-part2.js` from the thin `background.js` loader.
+- `importScripts('lib/jszip.min.js')` in the service worker.
 - Zip download via `URL.createObjectURL` + `chrome.downloads.download` (`saveAs: true`).
 
 ## Not included
 
 - OAuth client credentials, telemetry, or body logging.
 - Automated live API tests (require a real signed-in Zoho session in Chrome).
+

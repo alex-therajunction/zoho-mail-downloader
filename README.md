@@ -10,8 +10,6 @@ Chrome Manifest V3 extension that downloads emails from [Zoho Mail](https://mail
 4. Select this folder: `zoho-mail-downloader`
 5. Pin the extension if you like
 
-If you cloned from GitHub, first run `./scripts/assemble-jszip.sh` so `lib/jszip.min.js` exists.
-
 ## Usage
 
 1. Sign in at [https://mail.zoho.com/zm/](https://mail.zoho.com/zm/) and leave a Zoho Mail tab open.
@@ -41,10 +39,16 @@ Thousands of messages mean a large zip and a long run. Keep the Zoho Mail tab op
 
 See [BUILD_NOTES.md](BUILD_NOTES.md) for session/CSRF caveats.
 
-## Vendored JSZip
-
-JSZip 3.10.1 is vendored. On GitHub it may be stored as `lib/jszip-parts/*.bin.txt`; run `./scripts/assemble-jszip.sh` to produce `lib/jszip.min.js`.
-
 ## License
 
 MIT (JSZip is MIT/GPLv3 dual — see `lib/jszip.min.js` header).
+
+## Vendored JSZip
+
+The repo stores JSZip as gzip+base64url split parts under `lib/jszip-b64/` (for GitHub upload size limits). After clone, run:
+
+```bash
+./scripts/assemble-jszip.sh
+```
+
+This writes `lib/jszip.min.js` (required for Load unpacked). If that file is already present (>50KB), the script exits successfully without rewriting it.
