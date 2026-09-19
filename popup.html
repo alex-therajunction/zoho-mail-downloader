@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zoho Mail Downloader</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>Zoho Mail Downloader</h1>
+    <p class="subtitle">Exports .eml files via your signed-in Zoho session</p>
+  </header>
+
+  <section id="authStatus" class="status idle" role="status">
+    Checking Zoho Mail session…
+  </section>
+
+  <section class="controls">
+    <label for="accountSelect">Account</label>
+    <select id="accountSelect" disabled>
+      <option value="">— load accounts —</option>
+    </select>
+
+    <label for="folderSelect">Folder</label>
+    <select id="folderSelect" disabled>
+      <option value="__ALL__">All folders (exclude Trash/Spam)</option>
+    </select>
+
+    <label class="checkbox">
+      <input type="checkbox" id="includeTrashSpam" />
+      All including Trash/Spam
+    </label>
+  </section>
+
+  <section class="actions">
+    <button id="btnRefresh" type="button" class="secondary">Refresh</button>
+    <button id="btnStart" type="button" class="primary" disabled>Start</button>
+    <button id="btnCancel" type="button" class="danger" disabled>Cancel</button>
+  </section>
+
+  <section id="progress" class="progress hidden" aria-live="polite">
+    <div class="row"><span class="label">Folder</span><span id="progFolder">—</span></div>
+    <div class="row"><span class="label">Messages</span><span id="progCount">0 / 0</span></div>
+    <div class="row"><span class="label">Errors</span><span id="progErrors">0</span></div>
+    <div class="bar"><div id="progBar" class="bar-fill" style="width:0%"></div></div>
+    <p id="progDetail" class="detail"></p>
+  </section>
+
+  <section id="lastRun" class="last-run hidden">
+    <h2>Last run</h2>
+    <pre id="lastRunStats"></pre>
+  </section>
+
+  <footer>
+    <p>Keep a Zoho Mail tab open while downloading. Large mailboxes take a while.</p>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
