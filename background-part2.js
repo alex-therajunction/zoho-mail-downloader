@@ -71,7 +71,6 @@ async function apiGet(path) {
       credentials: 'include',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
       },
     });
 
@@ -128,9 +127,19 @@ function interpretApiJson(json, httpStatus) {
   }
 
   if (code !== 200) {
+    const moreInfo = (json.data && json.data.moreInfo) || '';
     const more =
-      json.data && json.data.moreInfo ? ` — ${json.data.moreInfo}` : desc ? ` — ${desc}` : '';
-    return { ok: false, status: code, error: `API status ${code}${more}`, data: json.data };
+      moreInfo ? ` — ${moreInfo}` : desc ? ` — ${desc}` : '';
+    const authish = /invalid.?ticket|csrf|unauthorized|not.?authenticated/i.test(
+      `${desc} ${moreInfo}`
+    );
+    return {
+      ok: false,
+      authRequired: authish || code === 400 && /ticket/i.test(moreInfo),
+      status: code,
+      error: `API status ${code}${more}`,
+      data: json.data,
+    };
   }
 
   return { ok: true, status: code, data: json.data };

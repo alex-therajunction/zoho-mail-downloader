@@ -8,11 +8,38 @@
   if (window.__zohoMailDownloaderBridge) return;
   window.__zohoMailDownloaderBridge = true;
 
+  function cookieValue(name) {
+    const parts = (';.cookie || '').split(';');
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i].trim();
+      const eq = p.indexOf('=');
+      if (eq < 0) continue;
+      if (p.slice(0, eq) === name) {
+        return decodeURIComponent(p.slice(eq + 1));
+      }
+    }
+    return null;
+  }
+
+  /** Zoho Mail UI sends X-ZCSRF-TOKEN: zmrcsr=<zmcsr cookie>. */
+  function zohoCsrfHeaders() {
+    const headers = { Accept: 'application/json' };
+    const zmcsr =
+      cookieValue('zmcsr') ||
+      cookieValue('CT_CSRF_TOKEN') ||
+      cookieValue('ZW_CSRF_TOKEN') ||
+      cookieValue('CSRF_TOKEN');
+    if (zmcsr) {
+      headers['X-ZCSRF-TOKEN'] = 'zmrcsr=' + zmcsr;
+    }
+    return headers;
+  }
+
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (!message || !message.type) return false;
 
     if (message.type === 'ZOHO_PING') {
-      sendResponse({ ok: true });
+      sendResponse({ ok: true, hasCsrf: !!cookieValue('zmcsr') });
       return false;
     }
 
@@ -21,14 +48,20 @@
     (async () => {
       try {
         const { url, options } = message;
-        const opts = Object.assign({ credentials: 'include', redirect: 'follow' }, options || {});
-        opts.headers = Object.assign(
-          {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          (options && options.headers) || {}
+        const method = ((options && options.method) || 'GET').toUpperCase();
+        const opts = Object.assign(
+          { credentials: 'include', redirect: 'follow', method },
+          options || {}
         );
+
+        // Merge CSRF; never force Content-Type on GET (Zoho returns INVALID_TICKET).
+        const baseHeaders = zohoCsrfHeaders();
+        const extra = (options && options.headers) || {};
+        opts.headers = Object.assign({}, baseHeaders, extra);
+        if (method === 'GET' || method === 'HEAD') {
+          delete opts.headers['Content-Type'];
+          delete opts.headers['content-type'];
+        }
 
         const res = await fetch(url, opts);
         const status = res.status;
@@ -37,7 +70,7 @@
         try {
           json = JSON.parse(text);
         } catch (_e) {
-          /* non-JSON (rare for these endpoints) */
+          /* non-JSON */
         }
 
         sendResponse({
@@ -45,7 +78,8 @@
           status,
           json,
           text: json ? undefined : text.slice(0, 500),
-          error: null
+          error: null,
+          csrfAttached: !!opts.headers['X-ZCSRF-TOKEN']
         });
       } catch (err) {
         sendResponse({
@@ -58,6 +92,6 @@
       }
     })();
 
-    return true; // async sendResponse
+    return true;
   });
 })();

@@ -30,3 +30,14 @@ Trash/Spam exclusion uses `folderType` and common folder names when type is miss
 - OAuth client credentials, telemetry, or body logging.
 - Automated live API tests (require a real signed-in Zoho session in Chrome).
 
+## CSRF (v0.1.1)
+
+Zoho Mail `GET /api/accounts` with cookies alone returns HTTP 400 `INVALID_TICKET`.
+The web UI sends:
+
+```
+Accept: application/json
+X-ZCSRF-TOKEN: zmrcsr=<value of zmcsr cookie>
+```
+
+Do **not** set `Content-Type` on GET. Cookie names seen: `zmcsr` (also mirrored as `CT_CSRF_TOKEN` / `ZW_CSRF_TOKEN` / `CSRF_TOKEN`). The content-script bridge attaches `X-ZCSRF-TOKEN` from `zmcsr`.
