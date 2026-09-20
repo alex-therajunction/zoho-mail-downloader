@@ -2,7 +2,13 @@
 
 Chrome Manifest V3 extension that downloads emails from [Zoho Mail](https://mail.zoho.com/zm/) as `.eml` files packed into a zip. It uses your **signed-in browser session** (no OAuth client setup).
 
-## Install (Load unpacked)
+## Install from a Release (recommended)
+
+1. Open the [latest release](https://github.com/alex-therajunction/zoho-mail-downloader/releases/latest)
+2. Download `zoho-mail-downloader-vX.Y.Z.zip`
+3. Unzip → Chrome → `chrome://extensions` → Developer mode → **Load unpacked** → `zoho-mail-downloader` folder
+
+## Install from source (Load unpacked)
 
 1. Open Chrome → `chrome://extensions`
 2. Enable **Developer mode**
@@ -52,3 +58,15 @@ The repo stores JSZip as gzip+base64url split parts under `lib/jszip-b64/` (for 
 ```
 
 This writes `lib/jszip.min.js` (required for Load unpacked). If that file is already present (>50KB), the script exits successfully without rewriting it.
+
+
+## Publishing a release
+
+GitHub Actions (`.github/workflows/release.yml`) builds the Load-unpacked zip and publishes a Release using `GITHUB_TOKEN`.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Or: Actions → **Release extension zip** → Run workflow → version `v0.1.0`.
