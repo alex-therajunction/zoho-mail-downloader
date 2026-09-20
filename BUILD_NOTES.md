@@ -24,6 +24,7 @@ Trash/Spam exclusion uses `folderType` and common folder names when type is miss
 - JSZip **3.10.1** vendored at `lib/jszip.min.js` (no CDN at runtime).
 - `importScripts('lib/jszip.min.js')` in the service worker.
 - Zip download via `URL.createObjectURL` + `chrome.downloads.download` (`saveAs: true`).
+- If `lib/jszip.min.js` is missing after clone, run `./scripts/assemble-jszip.sh` (rebuilds from `lib/jszip-b64/`).
 
 ## Not included
 
